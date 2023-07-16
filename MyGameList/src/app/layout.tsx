@@ -7,8 +7,8 @@ import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Game Store",
-  description: "Alguma coisa",
+  title: "My Game List",
+  description: "Gerencimento de jogos",
 };
 
 export default function RootLayout({
