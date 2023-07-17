@@ -35,52 +35,38 @@ export default function NewGame({ params }: { params: { slug: string } }) {
         }
       });
 
-      return () => {
-        unsubscribe();
-      };
+      return unsubscribe; // Remover o listener de autenticação ao desmontar o componente
     }
   }, [params.slug]);
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
-    if (params.slug === "add") {
-      setTitle("");
-      setDescription("");
-      setScore("");
-      setImg("");
-      setStatus("");
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      const uid = user.uid;
+      const gameData = {
+        title: title,
+        description: description,
+        score: score,
+        img: img,
+        status: status,
+      };
 
-      const auth = getAuth();
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const uid = user.uid;
-          await addDoc(collection(db, uid), {
-            title: title,
-            description: description,
-            score: score,
-            img: img,
-            status: status,
-          });
-        }
-      });
-    } else {
-      const auth = getAuth();
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const uid = user.uid;
-          const dataUpdate = doc(db, uid, params.slug);
+      if (params.slug === "add") {
+        setTitle("");
+        setDescription("");
+        setScore("");
+        setImg("");
+        setStatus("");
 
-          await updateDoc(dataUpdate, {
-            title: title,
-            description: description,
-            score: score,
-            img: img,
-            status: status,
-          });
-          router.push(`../description/${params.slug}`);
-        }
-      });
+        await addDoc(collection(db, uid), gameData);
+      } else {
+        const dataUpdate = doc(db, uid, params.slug);
+        await updateDoc(dataUpdate, gameData);
+        router.push(`../description/${params.slug}`);
+      }
     }
   };
 

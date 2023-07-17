@@ -31,7 +31,6 @@ export default function Login() {
           auth.onAuthStateChanged((user) => {
             if (user) {
               router.push("/");
-            } else {
             }
           });
         }
